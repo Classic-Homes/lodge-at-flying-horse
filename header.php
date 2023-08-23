@@ -1,24 +1,30 @@
 <!DOCTYPE html>
+<!--[if IE 6]>
+<html id="ie6" <?php language_attributes(); ?>>
+<![endif]-->
+<!--[if IE 7]>
+<html id="ie7" <?php language_attributes(); ?>>
+<![endif]-->
+<!--[if IE 8]>
+<html id="ie8" <?php language_attributes(); ?>>
+<![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8)  ]><!-->
 <html <?php language_attributes(); ?>>
+<!--<![endif]-->
 <head>
 	<meta charset="<?php bloginfo( 'charset' ); ?>" />
-<?php
-	elegant_description();
-	elegant_keywords();
-	elegant_canonical();
+	<?php elegant_description(); ?>
+	<?php elegant_keywords(); ?>
+	<?php elegant_canonical(); ?>
 
-	/**
-	 * Fires in the head, before {@see wp_head()} is called. This action can be used to
-	 * insert elements into the beginning of the head before any styles or scripts.
-	 *
-	 * @since 1.0
-	 */
-	do_action( 'et_head_meta' );
-
-	$template_directory_uri = get_template_directory_uri();
-?>
+	<?php do_action( 'et_head_meta' ); ?>
 
 	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
+
+	<?php $template_directory_uri = get_template_directory_uri(); ?>
+	<!--[if lt IE 9]>
+	<script src="<?php echo esc_url( $template_directory_uri . '/js/html5.js"' ); ?>" type="text/javascript"></script>
+	<![endif]-->
 
 	<script type="text/javascript">
 		document.documentElement.className = 'js';
@@ -27,12 +33,9 @@
 	<?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
+	<div id="page-container">
 <?php
-	$product_tour_enabled = et_builder_is_product_tour_enabled();
-	$page_container_style = $product_tour_enabled ? ' style="padding-top: 0px;"' : ''; ?>
-	<div id="page-container"<?php echo $page_container_style; ?>>
-<?php
-	if ( $product_tour_enabled || is_page_template( 'page-template-blank.php' ) ) {
+	if ( is_page_template( 'page-template-blank.php' ) ) {
 		return;
 	}
 
@@ -54,7 +57,6 @@
 ?>
 
 	<?php if ( $et_top_info_defined && ! $et_slide_header || is_customize_preview() ) : ?>
-		<?php ob_start(); ?>
 		<div id="top-header"<?php echo $et_top_info_defined ? '' : 'style="display: none;"'; ?>>
 			<div class="container clearfix">
 
@@ -108,22 +110,9 @@
 
 			</div> <!-- .container -->
 		</div> <!-- #top-header -->
-	<?php
-		$top_header = ob_get_clean();
-
-		/**
-		 * Filters the HTML output for the top header.
-		 *
-		 * @since ??
-		 *
-		 * @param string $top_header
-		 */
-		echo apply_filters( 'et_html_top_header', $top_header );
-	?>
 	<?php endif; // true ==== $et_top_info_defined ?>
 
 	<?php if ( $et_slide_header || is_customize_preview() ) : ?>
-		<?php ob_start(); ?>
 		<div class="et_slide_in_menu_container">
 			<?php if ( 'fullscreen' === et_get_option( 'header_style', 'left' ) || is_customize_preview() ) { ?>
 				<span class="mobile_menu_bar et_toggle_fullscreen_menu"></span>
@@ -150,7 +139,7 @@
 				<?php } ?>
 				<form role="search" method="get" class="et-search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>">
 					<?php
-						printf( '<input type="search" class="et-search-field" placeholder="%1$s" value="%2$s" name="s" title="%3$s" />',
+						printf( '<input type="search" class="et-search-field" placeholder="%1$s" placeholder="%2$s" name="s" title="%3$s" />',
 							esc_attr__( 'Search &hellip;', 'Divi' ),
 							get_search_query(),
 							esc_attr__( 'Search for:', 'Divi' )
@@ -168,11 +157,12 @@
 				<?php endif; ?>
 
 				<?php if ( '' !== ( $et_email = et_get_option( 'header_email' ) ) ) : ?>
-					<a href="<?php echo esc_attr( 'mailto:' . $et_email ); ?>"><span id="et-info-email"><?php echo esc_html( $et_email ); ?></span></a>
+					<span id="et-info-email"><a href="mailto:webrequests@classichomes.com"><?php echo esc_html( $et_email ); ?></a></span>
 				<?php endif; ?>
 				</div> <!-- #et-info -->
 
 			<?php endif; // true === $et_contact_info_defined ?>
+							
 			<?php if ( $et_contact_info_defined || true === $show_header_social_icons || false !== et_get_option( 'show_search_icon', true ) || class_exists( 'woocommerce' ) || is_customize_preview() ) { ?>
 				<?php if ( 'fullscreen' === et_get_option( 'header_style', 'left' ) ) { ?>
 					</div> <!-- .et_pb_top_menu_inner -->
@@ -210,29 +200,14 @@
 				</ul>
 			</div>
 		</div>
-	<?php
-		$slide_header = ob_get_clean();
-
-		/**
-		 * Filters the HTML output for the slide header.
-		 *
-		 * @since ??
-		 *
-		 * @param string $top_header
-		 */
-		echo apply_filters( 'et_html_slide_header', $slide_header );
-	?>
 	<?php endif; // true ==== $et_slide_header ?>
 
-	<?php ob_start(); ?>
 		<header id="main-header" data-height-onload="<?php echo esc_attr( et_get_option( 'menu_height', '66' ) ); ?>">
 			<div class="container clearfix et_menu_container">
 			<?php
 				$logo = ( $user_logo = et_get_option( 'divi_logo' ) ) && '' != $user_logo
 					? $user_logo
 					: $template_directory_uri . '/images/logo.png';
-
-				ob_start();
 			?>
 				<div class="logo_container">
 					<span class="logo_helper"></span>
@@ -240,18 +215,6 @@
 						<img src="<?php echo esc_attr( $logo ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" id="logo" data-height-percentage="<?php echo esc_attr( et_get_option( 'logo_height', '54' ) ); ?>" />
 					</a>
 				</div>
-			<?php
-				$logo_container = ob_get_clean();
-
-				/**
-				 * Filters the HTML output for the logo container.
-				 *
-				 * @since ??
-				 *
-				 * @param string $logo_container
-				 */
-				echo apply_filters( 'et_html_logo_container', $logo_container );
-			?>
 				<div id="et-top-navigation" data-height="<?php echo esc_attr( et_get_option( 'menu_height', '66' ) ); ?>" data-fixed-height="<?php echo esc_attr( et_get_option( 'minimized_menu_height', '40' ) ); ?>">
 					<?php if ( ! $et_slide_header || is_customize_preview() ) : ?>
 						<nav id="top-menu-nav">
@@ -298,16 +261,7 @@
 					</div>
 					<?php endif; // true === et_get_option( 'show_search_icon', false ) ?>
 
-					<?php
-
-					/**
-					 * Fires at the end of the 'et-top-navigation' element, just before its closing tag.
-					 *
-					 * @since 1.0
-					 */
-					do_action( 'et_header_top' );
-
-					?>
+					<?php do_action( 'et_header_top' ); ?>
 				</div> <!-- #et-top-navigation -->
 			</div> <!-- .container -->
 			<div class="et_search_outer">
@@ -325,23 +279,5 @@
 				</div>
 			</div>
 		</header> <!-- #main-header -->
-	<?php
-		$main_header = ob_get_clean();
 
-		/**
-		 * Filters the HTML output for the main header.
-		 *
-		 * @since ??
-		 *
-		 * @param string $main_header
-		 */
-		echo apply_filters( 'et_html_main_header', $main_header );
-	?>
 		<div id="et-main-area">
-	<?php
-		/**
-		 * Fires after the header, before the main content is output.
-		 *
-		 * @since ??
-		 */
-		do_action( 'et_before_main_content' );
